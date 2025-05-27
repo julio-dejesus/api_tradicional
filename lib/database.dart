@@ -23,6 +23,20 @@ void iniciaBanco() {
       endereco TEXT,
       verificado BOOLEAN NOT NULL DEFAULT 0
     );
+    
+    CREATE TABLE IF NOT EXISTS Eventos (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      organizador TEXT NOT NULL,
+      dataRealizacao DATE NOT NULL,
+      tipoEvento TEXT NOT NULL,
+      dataInscricao DATE,
+      cidade TEXT NOT NULL,
+      endereco TEXT NOT NULL,
+      premio TEXT,
+      contato TEXT,
+      verificado BOOLEAN NOT NULL DEFAULT 0
+    );
+    
   ''');
 
 

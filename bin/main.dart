@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:tradicional/rotas/cadastroEntidades.dart';
-import 'package:tradicional/rotas/listarEntidades.dart';
+import 'package:tradicional/rotas/POST/cadastroEntidades.dart';
+import 'package:tradicional/rotas/GET/listarEntidades.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:tradicional/database.dart';
