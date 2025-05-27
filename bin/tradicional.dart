@@ -14,7 +14,8 @@ void main() async {
   //addMiddleware(verificarJWTMiddleware()).
   addHandler(_router);
 
-  final server = await io.serve(handler, InternetAddress.anyIPv4, 8080);// Inicia o servidor na porta 8080
+  //final server = await io.serve(handler, InternetAddress.anyIPv4, 8080);// Inicia o servidor na porta 8080
+  final server = await io.serve(handler, InternetAddress.anyIPv4, int.parse(Platform.environment['PORT'] ?? '8080'));//altera para que o endpoint possa definir a porta
 
   print('Servidor rodando: http://${server.address.address}:${server.port}');
 }
