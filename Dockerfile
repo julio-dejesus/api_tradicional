@@ -4,6 +4,9 @@ FROM dart:stable
 # 2️⃣ Define o diretório de trabalho dentro do container
 WORKDIR /app
 
+# 🔧 Instala o SQLite nativo
+RUN apt-get update && apt-get install -y libsqlite3-dev
+
 # 3️⃣ Copia arquivos de dependência para instalar pacotes
 COPY pubspec.* ./
 
