@@ -47,7 +47,7 @@ Future<Response> cadastroUsuarios(Request request) async{
   stmt.dispose();
 
   return Response.ok(
-      jsonEncode({'mensagem': 'Evento cadastrado com sucesso.'})
+      jsonEncode({'mensagem': 'Usuário cadastrado com sucesso.'})
   );
 
 }

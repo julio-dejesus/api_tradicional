@@ -14,7 +14,7 @@ Future<Response> logar(Request request) async {
       'SELECT * FROM Usuarios WHERE login = ? AND senha = ?;'
   );
 
-  final result = stmt.select([data['nome'], hash]);
+  final result = stmt.select([data['login'], hash]);
   stmt.dispose();
 
   if (result.isEmpty) {
