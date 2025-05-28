@@ -11,14 +11,12 @@ void iniciaBanco() {
 
   db.execute('''
   
-    DROP TABLE Entidades;
-  
     CREATE TABLE IF NOT EXISTS Entidades (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       sigla TEXT NOT NULL,
       nome TEXT NOT NULL,
       fundado DATE NOT NULL,
-      rt INT NOT NULL,
+      rt INTEGER NOT NULL,
       cidade TEXT NOT NULL,
       endereco TEXT,
       verificado BOOLEAN NOT NULL DEFAULT 0
@@ -37,11 +35,16 @@ void iniciaBanco() {
       verificado BOOLEAN NOT NULL DEFAULT 0
     );
     
+    CREATE TABLE IF NOT EXISTS Usuarios(
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nome TEXT NOT NULL,
+      login TEXT NOT NULL,
+      email TEXT,
+      senha TEXT NOT NULL,
+      admin BOOLEAN NOT NULL DEFAULT 0
+    );
+    
   ''');
-
-
-
-
 
 }
 

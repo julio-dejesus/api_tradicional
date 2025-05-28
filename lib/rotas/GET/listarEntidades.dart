@@ -3,7 +3,8 @@ import 'package:shelf/shelf.dart';
 import '../../database.dart';
 
 Future<Response> listarEntidades(Request request) async{
-  final result = db.select('SELECT id, sigla, nome, fundado, rt, cidade, endereco, verificado FROM Entidades;');
+
+  final result = db.select('SELECT id, sigla, nome, fundado, rt, cidade, endereco, verificado FROM Entidades');
   final entidades = result.map((row) => {
     'id': row['id'],
     'sigla': row ['sigla'],
@@ -16,7 +17,7 @@ Future<Response> listarEntidades(Request request) async{
   }).toList();
 
   return Response.ok(
-    jsonEncode(entidades ),
+    jsonEncode(entidades),
     headers: {'Content-Type': 'application/json'},
   );
 
