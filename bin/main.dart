@@ -1,9 +1,17 @@
 import 'dart:io';
+import 'package:tradicional/rotas/GET/entidadesVerificar.dart';
+import 'package:tradicional/rotas/GET/eventosVerificar.dart';
+import 'package:tradicional/rotas/GET/listarEventos.dart';
+import 'package:tradicional/rotas/GET/procuraEntidades.dart';
+import 'package:tradicional/rotas/GET/procuraEventos.dart';
 import 'package:tradicional/rotas/POST/cadastroEntidades.dart';
 import 'package:tradicional/rotas/GET/listarEntidades.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart' as io;
 import 'package:tradicional/database.dart';
+import 'package:tradicional/rotas/POST/cadastroEventos.dart';
+import 'package:tradicional/rotas/POST/cadastroUsuarios.dart';
+import 'package:tradicional/rotas/POST/logar.dart';
 
 void main() async {
   iniciaBanco();//inicia o sqlite
@@ -24,12 +32,52 @@ Future<Response> _router(Request request) async {
   final path = request.url.path;
   final method = request.method;
 
-  if (path == 'novaEntidade' && method == 'POST') {
-    return cadastroEntidades(request);
+  if (method == 'POST') {
+
+    if(path == 'cadastroEntidades'){
+      return cadastroEntidades(request);
+    }
+
+    if(path == 'cadastroEventos'){
+      return cadastroEventos(request);
+    }
+
+    if(path == 'cadastroUsuarios'){
+      return cadastroUsuarios(request);
+    }
+
+    if(path == 'logar'){
+      return logar(request);
+    }
+
   }
 
-  if (path == 'entidades' && method == 'GET') {
-    return await listarEntidades(request);
+  if (method == 'GET') {
+
+    if(path == 'entidadesVerificar') {
+      return await entidadesVerificar(request);
+    }
+
+    if(path == 'eventosVerificar'){
+      return eventosVerificar(request);
+    }
+
+    if(path == 'listarEntidades'){
+      return listarEntidades(request);
+    }
+
+    if(path == 'listarEventos'){
+      return listarEventos(request);
+    }
+
+    if(path == 'procuraEntidades'){
+      return procuraEntidade(request);
+    }
+
+    if(path == 'procuraEventos'){
+      return procuraEventos(request);
+    }
+
   }
 
   return Response.notFound('Rota não encontrada');

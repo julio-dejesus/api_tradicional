@@ -4,7 +4,7 @@ import 'package:shelf/shelf.dart';
 
 import '../../database.dart';
 
-Future<Response> cadastroRodeio(Request request) async{
+Future<Response> cadastroEventos(Request request) async{
 
   final body = await request.readAsString();
   final data = jsonDecode(body);
