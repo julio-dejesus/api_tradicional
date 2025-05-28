@@ -16,14 +16,15 @@ Future<Response> logar(Request request) async {
 
   final result = stmt.select([data['login'], hash]);
   stmt.dispose();
-  print(result);
+  print('result: $result');
 
   if (result.isEmpty) {
     return Response(401, body: 'Usuário ou senha incorretos');
   }
 
   final usuario = result.first;
-  print(usuario);
+  print('usuario: $usuario');
+  print('hash: $hash');
 
   // 🔐 Gera token JWT
   final jwt = JWT(
