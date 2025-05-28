@@ -4,39 +4,39 @@ import 'package:dart_jsonwebtoken/dart_jsonwebtoken.dart';
 import 'package:shelf/shelf.dart';
 import '../../database.dart';
 
-
 Future<Response> logar(Request request) async {
   final body = await request.readAsString();
   final data = jsonDecode(body);
-  final hash = BCrypt.hashpw(data['senha'], BCrypt.gensalt());
 
-  final stmt = db.prepare(
-      'SELECT * FROM Usuarios WHERE login = ? AND senha = ?;'
-  );
+  final login = data['login'];
+  final senha = data['senha'];
 
-  final result = stmt.select([data['login'], hash]);
+  final stmt = db.prepare('SELECT * FROM Usuarios WHERE login = ?');
+  final result = stmt.select([login]);
   stmt.dispose();
-  
-  final testestmt = db.select('select * from usuarios');
-  
-  print('');
 
   if (result.isEmpty) {
-    return Response.ok(jsonEncode(testestmt));
+    return Response.forbidden(jsonEncode({'erro': 'Login inválido'}));
   }
 
   final usuario = result.first;
-  print('usuario: $usuario');
-  print('hash: $hash');
+
+  final senhaCorreta = BCrypt.checkpw(senha, usuario['senha']);
+
+  if (!senhaCorreta) {
+    return Response.forbidden(jsonEncode({'erro': 'Senha inválida'}));
+  }
 
   // 🔐 Gera token JWT
   final jwt = JWT(
-    { 'id': usuario['id'],
+    {
+      'id': usuario['id'],
       'nome': usuario['nome'],
       'email': usuario['email'],
       'login': usuario['login'],
       'admin': usuario['admin'],
-      'exp': DateTime.now().add(Duration(minutes: 30)).millisecondsSinceEpoch ~/ 1000},// Expira o token em 30 minutos
+      'exp': DateTime.now().add(Duration(minutes: 30)).millisecondsSinceEpoch ~/ 1000,
+    },
     issuer: 'minha_api',
   );
 

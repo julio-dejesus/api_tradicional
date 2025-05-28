@@ -22,16 +22,14 @@ Future<Response> cadastroUsuarios(Request request) async{
     return Response.badRequest(body: 'Preencha o login.');
   }
 
-  if (data['email'] == "") {
-    return Response.badRequest(body: 'Caso não deseje informar o email digite NULL.');
-  }
-
   if (data['senha'] == null || data['senha'] == "") {
     return Response.badRequest(body: 'Preencha a senha.');
   }
 
   // Gerar hash com salt embutido
   final hash = BCrypt.hashpw(senha, BCrypt.gensalt());
+  //bool campoInvalido(String? campo) => campo == null || campo.trim().isEmpty;
+
 
   print('Nome: $nome');
   print('Login: $login');
