@@ -33,7 +33,11 @@ Future<Response> cadastroUsuarios(Request request) async{
   // Gerar hash com salt embutido
   final hash = BCrypt.hashpw(senha, BCrypt.gensalt());
 
-
+  print('Nome: $nome');
+  print('Login: $login');
+  print('E-mail: $email');
+  print('Senha: $senha');
+  print('Hash: $hash');
 
   final stmt = db.prepare(
       'INSERT INTO Usuarios (nome, login, email, senha) VALUES (?, ?, ?, ?)'
