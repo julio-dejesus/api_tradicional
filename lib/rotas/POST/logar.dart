@@ -28,8 +28,9 @@ Future<Response> logar(Request request) async {
     { 'id': usuario['id'],
       'nome': usuario['nome'],
       'email': usuario['email'],
+      'login': usuario['login'],
       'admin': usuario['admin'],
-      'exp': DateTime.now().add(Duration(minutes: 30)).millisecondsSinceEpoch ~/ 1000},// 🔥 Aqui está a expiração
+      'exp': DateTime.now().add(Duration(minutes: 30)).millisecondsSinceEpoch ~/ 1000},// Expira o token em 30 minutos
     issuer: 'minha_api',
   );
 
