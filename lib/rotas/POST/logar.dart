@@ -16,10 +16,13 @@ Future<Response> logar(Request request) async {
 
   final result = stmt.select([data['login'], hash]);
   stmt.dispose();
-  print('result: ${stmt.select([data['login'], hash]).toString()}');
+  
+  final testestmt = db.select('select * from usuarios');
+  
+  print('');
 
   if (result.isEmpty) {
-    return Response(401, body: 'Usuário ou senha incorretos');
+    return Response.ok(jsonEncode(testestmt));
   }
 
   final usuario = result.first;
