@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:tradicional/rotas/GET/entidadesVerificar.dart';
 import 'package:tradicional/rotas/GET/eventosVerificar.dart';
 import 'package:tradicional/rotas/GET/listarEventos.dart';
+import 'package:tradicional/rotas/GET/listarUsuarios.dart';
 import 'package:tradicional/rotas/GET/procuraEntidades.dart';
 import 'package:tradicional/rotas/GET/procuraEventos.dart';
 import 'package:tradicional/rotas/POST/cadastroEntidades.dart';
@@ -76,6 +77,10 @@ Future<Response> _router(Request request) async {
 
     if(path == 'procuraEventos'){
       return procuraEventos(request);
+    }
+
+    if(path == 'listarUsuarios'){
+      return listarUsuarios(request);
     }
 
   }
