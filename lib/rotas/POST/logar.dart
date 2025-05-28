@@ -16,7 +16,7 @@ Future<Response> logar(Request request) async {
 
   final result = stmt.select([data['login'], hash]);
   stmt.dispose();
-  print('result: $result');
+  print('result: ${stmt.select([data['login'], hash]).toString()}');
 
   if (result.isEmpty) {
     return Response(401, body: 'Usuário ou senha incorretos');
