@@ -11,9 +11,9 @@ void iniciaBanco() {
 
   db.execute('''
   
-    DROP TABLE Entidades;
-    DROP TABLE Eventos;
-    DROP TABLE Usuarios;
+    DROP TABLE IF EXISTS Entidades;
+    DROP TABLE IF EXISTS Eventos;
+    DROP TABLE IF EXISTS Usuarios;
   
     CREATE TABLE IF NOT EXISTS Entidades (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
