@@ -37,7 +37,7 @@ void iniciaBanco() {
       endereco TEXT NOT NULL,
       premio TEXT,
       contato TEXT,
-      verificado BOOLEAN NOT NULL DEFAULT 0
+      verificado BOOLEAN NOT NULL DEFAULT 0,
       UNIQUE (tipoEvento, dataRealizacao, organizador, endereco)
     );
     
