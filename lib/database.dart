@@ -10,11 +10,7 @@ void iniciaBanco() {
   db = sqlite3.open(dbPath);
 
   db.execute('''
-  
-    DROP TABLE IF EXISTS Entidades;
-    DROP TABLE IF EXISTS Eventos;
-    DROP TABLE IF EXISTS Usuarios;
-  
+
     CREATE TABLE IF NOT EXISTS Entidades (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       sigla TEXT NOT NULL,
