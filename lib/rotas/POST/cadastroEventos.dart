@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:shelf/shelf.dart';
+import 'package:sqlite3/common.dart';
 
 import '../../database.dart';
 
@@ -18,6 +19,8 @@ Future<Response> cadastroEventos(Request request) async{
   final premio = data['premio'];
   final contato = data['contato'];
 
+
+  //validações
   if (data['organizador'] == null || data['organizador'] == "") {
     return Response.badRequest(body: 'Preencha o organizador do evento.');
   }
@@ -50,16 +53,54 @@ Future<Response> cadastroEventos(Request request) async{
     return Response.badRequest(body: 'Insira alguma maneira de contato com o organizador do evento.');
   }
 
-  final stmt = db.prepare(
-      'INSERT INTO Eventos (organizador, dataRealizacao, tipoEvento, dataInscricao, cidade, endereco, premio, contato) '
-          'VALUES (?, ?, ?, ?, ?, ?, ?, ?)'
-  );
 
-  stmt.execute([organizador, dataRealizacao, tipoEvento, dataInscricao, cidade, endereco, premio, contato]);
-  stmt.dispose();
 
-  return Response.ok(
-    jsonEncode({'mensagem': 'Evento cadastrado com sucesso.'})
-  );
+  //inserção no db
+  try {
+    final stmt = db.prepare('''
+      INSERT INTO Eventos (organizador, dataRealizacao, tipoEvento, dataInscricao, 
+        cidade, endereco, premio, contato
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+    ''');
+
+    stmt.execute([
+      organizador,
+      dataRealizacao,
+      tipoEvento,
+      dataInscricao,
+      cidade,
+      endereco,
+      premio,
+      contato
+    ]);
+    stmt.dispose();
+
+    return Response.ok(
+      jsonEncode({'mensagem': 'Evento cadastrado com sucesso.'}),
+      headers: {'Content-Type': 'application/json'},
+    );
+  } on SqliteException catch (e) {
+    // Tratando violação de UNIQUE
+    if (e.message.contains('UNIQUE') || e.message.contains('unique')) {
+      return Response(
+        409,
+        body: jsonEncode({
+          'erro': 'Já existe um evento com esse tipo, data, organizador e endereço.'
+        }),
+        headers: {'Content-Type': 'application/json'},
+      );
+    }
+    // Outro erro de SQLite
+    return Response.internalServerError(
+      body: jsonEncode({'erro': 'Erro no banco de dados.'}),
+      headers: {'Content-Type': 'application/json'},
+    );
+  } catch (e) {
+    // Erros genéricos
+    return Response.internalServerError(
+      body: jsonEncode({'erro': 'Erro inesperado.'}),
+      headers: {'Content-Type': 'application/json'},
+    );
+  }
 
 }

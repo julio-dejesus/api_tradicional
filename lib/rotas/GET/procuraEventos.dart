@@ -12,6 +12,10 @@ Future<Response> procuraEventos(Request request) async {
   List<String> conditions = [];
   List<dynamic> values = [];
 
+  if(data == null || data == ''){
+    return Response.badRequest(body: 'A requisição deve conter pelo menos uma especificação');
+  }
+
   for (var campo in camposValidos) {
     if (data.containsKey(campo) && data[campo] != null && data[campo].toString().isNotEmpty) {
       // Campo numérico usa "="
