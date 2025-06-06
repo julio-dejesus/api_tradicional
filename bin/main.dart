@@ -13,6 +13,9 @@ import 'package:tradicional/database.dart';
 import 'package:tradicional/rotas/POST/cadastroEventos.dart';
 import 'package:tradicional/rotas/POST/cadastroUsuarios.dart';
 import 'package:tradicional/rotas/POST/logar.dart';
+import 'package:tradicional/rotas/DELETE/deletarEntidade.dart';
+import 'package:tradicional/rotas/DELETE/deletarEvento.dart';
+import 'package:tradicional/rotas/DELETE/deletarUsuario.dart';
 
 void main() async {
   iniciaBanco();//inicia o sqlite
@@ -84,6 +87,26 @@ Future<Response> _router(Request request) async {
     }
 
   }
+
+  if (method == 'DELETE') {
+
+    if (path.startsWith('entidade/')) {
+      final id = path.replaceFirst('entidade/', '');
+      return deletarEntidade(request, id);
+    }
+
+    if (path.startsWith('evento/')) {
+      final id = path.replaceFirst('evento/', '');
+      return deletarEvento(request, id);
+    }
+
+    if (path.startsWith('usuario/')) {
+      final id = path.replaceFirst('usuario/', '');
+      return deletarUsuario(request, id);
+    }
+
+  }
+
 
   return Response.notFound('Rota não encontrada');
 }
