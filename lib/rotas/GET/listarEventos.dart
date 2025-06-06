@@ -4,7 +4,7 @@ import '../../database.dart';
 
 Future<Response> listarEventos(Request request) async{
 
-  final result = db.select('SELECT id, organizador, dataRealizacao, tipoEvento, dataInscricao, cidade, endereco, premio, contato, verificado FROM Eventos');
+  final result = db.select('SELECT id, organizador, dataRealizacao, tipoEvento, dataInscricao, cidade, endereco, premio, contato, verificado FROM Eventos WHERE verificado = 1');
   final entidades = result.map((row) =>{
     'id': row['id'],
     'organizador': row['organizador'],

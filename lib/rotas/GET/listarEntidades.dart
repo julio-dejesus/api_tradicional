@@ -4,7 +4,7 @@ import '../../database.dart';
 
 Future<Response> listarEntidades(Request request) async{
 
-  final result = db.select('SELECT id, sigla, nome, fundado, rt, cidade, endereco, verificado FROM Entidades');
+  final result = db.select('SELECT id, sigla, nome, fundado, rt, cidade, endereco, verificado FROM Entidades WHERE verificado = 1');
   final entidades = result.map((row) => {
     'id': row['id'],
     'sigla': row ['sigla'],
