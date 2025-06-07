@@ -4,6 +4,8 @@ import 'package:sqlite3/common.dart';
 import '../../database.dart';
 import 'package:bcrypt/bcrypt.dart';
 
+import '../../verificarJWT.dart';
+
 
 Future<Response> cadastroUsuarios(Request request) async{
 
@@ -15,7 +17,12 @@ Future<Response> cadastroUsuarios(Request request) async{
   final email = data['email'];
   final senha = data['senha'];
 
+  // Verifica se o token está presente e é válido
+  final token = request.headers['Authorization']?.replaceFirst('Bearer ', '');
 
+  if (token == null || !verificarJWT(token)) {
+    return Response.forbidden(jsonEncode({'erro': 'Token inválido ou ausente'}));
+  }
 
   //validações
   if (data['nome'] == null || data['nome'] == "") {

@@ -3,7 +3,7 @@ import 'package:shelf/shelf.dart';
 import '../../database.dart';
 import '../../verificarJWT.dart';
 
-Future<Response> verificarEntidade(Request request, String id) async {
+Future<Response> verificarEvento(Request request, String id) async {
   // Verifica se o token está presente e é válido
   final token = request.headers['Authorization']?.replaceFirst('Bearer ', '');
 
@@ -20,14 +20,14 @@ Future<Response> verificarEntidade(Request request, String id) async {
   }
 
   // Realiza o UPDATE
-  final stmt = db.prepare('UPDATE Entidades SET verificado = 1 WHERE id = ?');
+  final stmt = db.prepare('UPDATE Eventos SET verificado = 1 WHERE id = ?');
   stmt.execute([id]);
   final changes = db.getUpdatedRows();
   stmt.dispose();
 
   if (changes == 0) {
-    return Response.notFound(jsonEncode({'erro': 'Entidade não encontrada'}));
+    return Response.notFound(jsonEncode({'erro': 'Evento não encontrado'}));
   }
 
-  return Response.ok(jsonEncode({'mensagem': 'Entidade verificada com sucesso'}));
+  return Response.ok(jsonEncode({'mensagem': 'Evento verificado com sucesso'}));
 }
