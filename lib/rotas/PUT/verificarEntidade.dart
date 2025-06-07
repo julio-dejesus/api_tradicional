@@ -1,15 +1,8 @@
 import 'dart:convert';
 import 'package:shelf/shelf.dart';
 import '../../database.dart';
-import '../../verificarJWT.dart';
 
 Future<Response> verificarEntidade(Request request, String id) async {
-  // Verifica se o token está presente e é válido
-  final token = request.headers['Authorization']?.replaceFirst('Bearer ', '');
-
-  if (token == null || !verificarJWT(token)) {
-    return Response.forbidden(jsonEncode({'erro': 'Token inválido ou ausente'}));
-  }
 
   // Lê e valida o corpo da requisição
   final body = await request.readAsString();

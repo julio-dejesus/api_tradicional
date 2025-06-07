@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:shelf_router/shelf_router.dart';
 import 'package:tradicional/rotas/GET/entidadesVerificar.dart';
 import 'package:tradicional/rotas/GET/eventosVerificar.dart';
 import 'package:tradicional/rotas/GET/listarEventos.dart';
@@ -16,97 +17,52 @@ import 'package:tradicional/rotas/POST/logar.dart';
 import 'package:tradicional/rotas/DELETE/deletarEntidade.dart';
 import 'package:tradicional/rotas/DELETE/deletarEvento.dart';
 import 'package:tradicional/rotas/DELETE/deletarUsuario.dart';
+import 'package:tradicional/rotas/PUT/verificarEntidade.dart';
+import 'package:tradicional/rotas/PUT/verificarEvento.dart';
+import 'package:tradicional/verificarJWT.dart';
 
 void main() async {
   iniciaBanco();//inicia o sqlite
 
-  // Define o handler da requisição
-  final handler = Pipeline().
-  addMiddleware(logRequests()).
-  //addMiddleware(verificarJWTMiddleware()).
-  addHandler(_router);
+  final publicRouter = Router()
+    ..post('/logar', logar)
+    ..post('/cadastroEventos', cadastroEventos)
+    ..post('/cadastroEntidades', cadastroEntidades)
+    ..get('/entidadesVerificar', entidadesVerificar)
+    ..get('/eventosVerificar', eventosVerificar)
+    ..get('/listarEntidades', listarEntidades)
+    ..get('/listarEventos', listarEventos)
+    ..get('/procuraEntidades', procuraEntidade)
+    ..get('/procuraEventos', procuraEventos);
+
+  final protectedRouter = Router()
+    ..get('/listarUsuarios', listarUsuarios)
+    ..delete('/deletarEntidade/<id>', deletarEntidade)
+    ..delete('/deletarEvento/<id>', deletarEvento)
+    ..delete('/deletarUsuario/<id>', deletarUsuario)
+    ..post('/cadastroUsuarios', cadastroUsuarios)
+    ..put('/verificarEntidade/<id>', verificarEntidade)
+    ..put('/verificarEvento/<id>', verificarEvento);
+
+  final publicHandler = Pipeline()
+      .addMiddleware(logRequests())
+      .addHandler(publicRouter);
+
+  final protectedHandler = Pipeline()
+      .addMiddleware(logRequests())
+      .addMiddleware(verificarJWTMiddleware())
+      .addHandler(protectedRouter);
+
+  final handler = Cascade()
+      .add(protectedHandler)
+      .add(publicHandler)
+      .handler;
 
   //final server = await io.serve(handler, InternetAddress.anyIPv4, 8080);// Inicia o servidor na porta 8080
-  final server = await io.serve(handler, InternetAddress.anyIPv4, int.parse(Platform.environment['PORT'] ?? '8080'));//altera para que o endpoint possa definir a porta
+  final server = await io.serve(
+      handler,
+      InternetAddress.anyIPv4,
+      int.parse(Platform.environment['PORT'] ?? '8080'));//altera para que o endpoint possa definir a porta
 
   print('Servidor rodando: http://${server.address.address}:${server.port}');
-}
-
-Future<Response> _router(Request request) async {
-  final path = request.url.path;
-  final method = request.method;
-
-  if (method == 'POST') {
-
-    if(path == 'cadastroEntidades'){
-      return cadastroEntidades(request);
-    }
-
-    if(path == 'cadastroEventos'){
-      return cadastroEventos(request);
-    }
-
-    if(path == 'cadastroUsuarios'){
-      return cadastroUsuarios(request);
-    }
-
-    if(path == 'logar'){
-      return logar(request);
-    }
-
-  }
-
-  if (method == 'GET') {
-
-    if(path == 'entidadesVerificar') {
-      return await entidadesVerificar(request);
-    }
-
-    if(path == 'eventosVerificar'){
-      return eventosVerificar(request);
-    }
-
-    if(path == 'listarEntidades'){
-      return listarEntidades(request);
-    }
-
-    if(path == 'listarEventos'){
-      return listarEventos(request);
-    }
-
-    if(path == 'procuraEntidades'){
-      return procuraEntidade(request);
-    }
-
-    if(path == 'procuraEventos'){
-      return procuraEventos(request);
-    }
-
-    if(path == 'listarUsuarios'){
-      return listarUsuarios(request);
-    }
-
-  }
-
-  if (method == 'DELETE') {
-
-    if (path.startsWith('entidade/')) {
-      final id = path.replaceFirst('entidade/', '');
-      return deletarEntidade(request, id);
-    }
-
-    if (path.startsWith('evento/')) {
-      final id = path.replaceFirst('evento/', '');
-      return deletarEvento(request, id);
-    }
-
-    if (path.startsWith('usuario/')) {
-      final id = path.replaceFirst('usuario/', '');
-      return deletarUsuario(request, id);
-    }
-
-  }
-
-
-  return Response.notFound('Rota não encontrada');
 }
