@@ -6,6 +6,12 @@ final _chaveSecreta = 'chave_api_tradicional';
 Middleware verificarJWTMiddleware() {
   return (Handler innerHandler) {
     return (Request request) async {
+      final tentativeResponse = await innerHandler(request);
+
+      if (tentativeResponse.statusCode == 404) {
+        return tentativeResponse;
+      }
+
       final authorization = request.headers['Authorization'];
 
       if (authorization == null || !authorization.startsWith('Bearer ')) {
