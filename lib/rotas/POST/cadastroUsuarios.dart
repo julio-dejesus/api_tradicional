@@ -4,74 +4,88 @@ import 'package:sqlite3/common.dart';
 import '../../database.dart';
 import 'package:bcrypt/bcrypt.dart';
 
-
-Future<Response> cadastroUsuarios(Request request) async{
-
+Future<Response> cadastroUsuarios(Request request) async {
   final body = await request.readAsString();
-  final data = jsonDecode(body);
 
-  final nome = data['nome'];
-  final login = data['login'];
-  final email = data['email'];
-  final senha = data['senha'];
-
-  //validações
-  if (data['nome'] == null || data['nome'] == "") {
-    return Response.badRequest(body: 'Preencha o nome do usuário.');
-  }
-
-  if (data['login'] == null || data['login'] == "") {
-    return Response.badRequest(body: 'Preencha o login.');
-  }
-
-  if (data['senha'] == null || data['senha'] == "") {
-    return Response.badRequest(body: 'Preencha a senha.');
-  }
-
-  // Gerar hash com salt embutido
-  final hash = BCrypt.hashpw(senha, BCrypt.gensalt());
-  //bool campoInvalido(String? campo) => campo == null || campo.trim().isEmpty;
-
-  //controle
-  print('Nome: $nome');
-  print('Login: $login');
-  print('E-mail: $email');
-  print('Senha: $senha');
-  print('Hash: $hash');
-
-  //inserção no db
+  dynamic data;
   try {
-    final stmt = db.prepare(
-        'INSERT INTO Usuarios (nome, login, email, senha) VALUES (?, ?, ?, ?)'
-    );
-    stmt.execute([nome, login, email, hash]);
-    stmt.dispose();
-
-    return Response.ok(
-      jsonEncode({'mensagem': 'Usuário cadastrado com sucesso.'}),
-      headers: {'Content-Type': 'application/json'},
-    );
-
-  } on SqliteException catch (e) {
-    // Tratando violação de UNIQUE
-    if (e.message.contains('UNIQUE') || e.message.contains('unique')) {
-      return Response(
-        409,
-        body: jsonEncode({'erro': 'Login já está em uso. Escolha outro.'}),
-        headers: {'Content-Type': 'application/json'},
-      );
-    }
-    // Outro erro de SQLite
-    return Response.internalServerError(
-      body: jsonEncode({'erro': 'Erro no banco de dados.'}),
-      headers: {'Content-Type': 'application/json'},
-    );
+    data = jsonDecode(body);
   } catch (e) {
-    // Erros genéricos
-    return Response.internalServerError(
-      body: jsonEncode({'erro': 'Erro inesperado.'}),
-      headers: {'Content-Type': 'application/json'},
-    );
+    return Response.badRequest(body: 'JSON inválido.');
   }
 
+  List<Map<String, dynamic>> usuarios = [];
+
+  if (data is Map<String, dynamic>) {
+    usuarios.add(data);
+  } else if (data is List) {
+    for (var item in data) {
+      if (item is Map<String, dynamic>) {
+        usuarios.add(item);
+      } else {
+        return Response.badRequest(body: 'A lista contém um item inválido.');
+      }
+    }
+  } else {
+    return Response.badRequest(body: 'Formato JSON inválido. Esperado objeto ou lista de objetos.');
+  }
+
+  final inseridos = [];
+  final falhas = [];
+
+  for (final usuario in usuarios) {
+    final nome = usuario['nome'];
+    final login = usuario['login'];
+    final email = usuario['email'];
+    final senha = usuario['senha'];
+
+    // Validações
+    if (nome == null || nome == '' ||
+        login == null || login == '' ||
+        senha == null || senha == '') {
+      falhas.add({
+        'usuario': usuario,
+        'erro': 'Nome, login e senha são obrigatórios.'
+      });
+      continue;
+    }
+
+    try {
+      final hash = BCrypt.hashpw(senha, BCrypt.gensalt());
+
+      final stmt = db.prepare(
+          'INSERT INTO Usuarios (nome, login, email, senha) VALUES (?, ?, ?, ?)'
+      );
+
+      stmt.execute([nome, login, email, hash]);
+      stmt.dispose();
+
+      inseridos.add({'login': login, 'nome': nome});
+    } on SqliteException catch (e) {
+      if (e.message.contains('UNIQUE')) {
+        falhas.add({
+          'usuario': usuario,
+          'erro': 'Login já está em uso. Escolha outro.'
+        });
+      } else {
+        falhas.add({
+          'usuario': usuario,
+          'erro': 'Erro no banco de dados: ${e.message}'
+        });
+      }
+    } catch (e) {
+      falhas.add({
+        'usuario': usuario,
+        'erro': 'Erro inesperado: ${e.toString()}'
+      });
+    }
+  }
+
+  return Response.ok(
+    jsonEncode({
+      'sucesso': inseridos,
+      'falhas': falhas,
+    }),
+    headers: {'Content-Type': 'application/json'},
+  );
 }
