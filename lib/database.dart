@@ -10,8 +10,6 @@ void iniciaBanco() {
   final dbPath = p.join(Directory.current.path, 'api_tradicional.db');
   db = sqlite3.open(dbPath);
 
-  print('Usando banco de dados em: $dbPath');
-
   db.execute('''
   CREATE TABLE IF NOT EXISTS Entidades (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
