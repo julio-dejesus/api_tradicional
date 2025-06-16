@@ -28,6 +28,7 @@ void main() async {
     ..post('/logar', logar)
     ..post('/cadastroEventos', cadastroEventos)
     ..post('/cadastroEntidades', cadastroEntidades)
+    ..post('/cadastroUsuarios', cadastroUsuarios)
     ..get('/entidadesVerificar', entidadesVerificar)
     ..get('/eventosVerificar', eventosVerificar)
     ..get('/listarEntidades', listarEntidades)
@@ -40,7 +41,6 @@ void main() async {
     ..delete('/deletarEntidade/<id>', deletarEntidade)
     ..delete('/deletarEvento/<id>', deletarEvento)
     ..delete('/deletarUsuario/<id>', deletarUsuario)
-    ..post('/cadastroUsuarios', cadastroUsuarios)
     ..put('/verificarEntidade/<id>', verificarEntidade)
     ..put('/verificarEvento/<id>', verificarEvento);
 
