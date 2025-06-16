@@ -50,7 +50,6 @@ admin BOOLEAN NOT NULL DEFAULT 0
 );
     ''');
 
-  // Verifica se o admin já existe e insere se não existir
   final resultado = db.select('SELECT 1 FROM Usuarios WHERE login = ?', ['admin']);
   if (resultado.isEmpty) {
     db.execute('''
