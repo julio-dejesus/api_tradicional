@@ -28,7 +28,6 @@ void main() async {
     ..post('/logar', logar)
     ..post('/cadastroEventos', cadastroEventos)
     ..post('/cadastroEntidades', cadastroEntidades)
-    ..post('/cadastroUsuarios', cadastroUsuarios)
     ..get('/entidadesVerificar', entidadesVerificar)
     ..get('/eventosVerificar', eventosVerificar)
     ..get('/listarEntidades', listarEntidades)
@@ -37,6 +36,7 @@ void main() async {
     ..get('/procuraEventos', procuraEventos);
 
   final protectedRouter = Router()
+    ..post('/cadastroUsuarios', cadastroUsuarios)
     ..get('/listarUsuarios', listarUsuarios)
     ..delete('/deletarEntidade/<id>', deletarEntidade)
     ..delete('/deletarEvento/<id>', deletarEvento)
