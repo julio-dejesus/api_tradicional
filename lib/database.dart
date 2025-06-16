@@ -10,7 +10,6 @@ void iniciaBanco() {
   db = sqlite3.open(dbPath);
 
   db.execute('''
-  
 CREATE TABLE IF NOT EXISTS Entidades (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 sigla TEXT NOT NULL,
@@ -22,7 +21,9 @@ endereco TEXT,
 verificado BOOLEAN NOT NULL DEFAULT 0,
 UNIQUE (sigla, nome, rt)
 );
+    ''');
 
+  db.execute('''
 CREATE TABLE IF NOT EXISTS Eventos (
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 organizador TEXT NOT NULL,
@@ -36,7 +37,9 @@ contato TEXT,
 verificado BOOLEAN NOT NULL DEFAULT 0,
 UNIQUE (tipoEvento, dataRealizacao, organizador, endereco)
 );
+    ''');
 
+  db.execute('''
 CREATE TABLE IF NOT EXISTS Usuarios(
 id INTEGER PRIMARY KEY AUTOINCREMENT,
 nome TEXT NOT NULL,
@@ -45,13 +48,16 @@ email TEXT,
 senha TEXT NOT NULL,
 admin BOOLEAN NOT NULL DEFAULT 0
 );
-    
-IF NOT EXISTS(SELECT TOP 1 1 FROM Usuarios WHERE login = 'admin')
- BEGIN
-  INSERT Usuarios VALUES('Administrador do Sistema', 'admin', null, 'senha', 0)
- END
-    
-  ''');
+    ''');
+
+  // Verifica se o admin já existe e insere se não existir
+  final resultado = db.select('SELECT 1 FROM Usuarios WHERE login = ?', ['admin']);
+  if (resultado.isEmpty) {
+    db.execute('''
+      INSERT INTO Usuarios (nome, login, email, senha, admin)
+      VALUES ('Administrador do Sistema', 'admin', null, 'senha', 0)
+    ''');
+  }
 
 }
 
