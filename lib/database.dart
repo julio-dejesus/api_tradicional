@@ -7,7 +7,12 @@ import 'package:path/path.dart' as p;
 late Database db;
 
 void iniciaBanco() {
-  final dbPath = '/data/api_tradicional.db';
+  final dataDir = Directory('/data');
+  if (!dataDir.existsSync()) {
+  dataDir.createSync(recursive: true);
+  }
+
+  final dbPath = p.join(dataDir.path, 'api_tradicional.db');
   db = sqlite3.open(dbPath);
 
   db.execute('''
