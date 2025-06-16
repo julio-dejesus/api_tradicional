@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:bcrypt/bcrypt.dart';
 import 'package:sqlite3/sqlite3.dart';
 import 'package:path/path.dart' as p;
 
@@ -52,10 +53,11 @@ admin BOOLEAN NOT NULL DEFAULT 0
 
   final resultado = db.select('SELECT 1 FROM Usuarios WHERE login = ?', ['admin']);
   if (resultado.isEmpty) {
+    final senhaHash = BCrypt.hashpw('senha', BCrypt.gensalt());
     db.execute('''
       INSERT INTO Usuarios (nome, login, email, senha, admin)
-      VALUES ('Administrador do Sistema', 'admin', null, 'senha', 0)
-    ''');
+      VALUES ('Administrador do Sistema', 'admin', null, ?, 0)
+    ''', [senhaHash]);
   }
 
 }
