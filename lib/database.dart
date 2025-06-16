@@ -7,13 +7,10 @@ import 'package:path/path.dart' as p;
 late Database db;
 
 void iniciaBanco() {
-  final dataDir = Directory('/data');
-  if (!dataDir.existsSync()) {
-  dataDir.createSync(recursive: true);
-  }
-
-  final dbPath = p.join(dataDir.path, 'api_tradicional.db');
+  final dbPath = p.join(Directory.current.path, 'api_tradicional.db');
   db = sqlite3.open(dbPath);
+
+  print('Banco criado no endereço: $dbPath');
 
   db.execute('''
   CREATE TABLE IF NOT EXISTS Entidades (
